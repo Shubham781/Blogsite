@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Platform</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 90%;
+      margin: 0 auto;
+    }
+
+    /* Header Styles */
+    header {
+      background-color: #343a40;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      margin: 0;
+    }
+
+    .nav-links {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Main Content Styles */
+    main {
+      flex: 1;
+      padding: 20px 0;
+    }
+
+    .post-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .post-item {
+      background-color: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .post-item .post-content {
+      flex: 1;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .edit-btn, .delete-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .edit-btn {
+      background-color: #f0ad4e;
+    }
+
+    .delete-btn {
+      background-color: #d9534f;
+    }
+
+    /* Footer Styles */
+    footer {
+      background-color: #343a40;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      margin-top: auto;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      border-radius: 5px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* Specific container styles */
+    footer .container,
+    header .container {
+      background-color: transparent;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav class="navbar">
+        <h1 class="navbar-brand">Blog Platform</h1>
+        <ul class="nav-links">
+          <li><a href="/views/login.html" class="nav-link">Logout</a></li>
+          <li><a href="#" class="nav-link" id="createPostBtn">Create Post</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h2>Blog Posts</h2>
+      <ul id="postList" class="post-list">
+        <!-- Blog posts will be rendered here dynamically -->
+        <li class="post-item">
+          <div class="post-content">
+            <strong>Title 1</strong>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          </div>
+          <div class="post-actions">
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn">Delete</button>
+          </div>
+        </li>
+        <li class="post-item">
+          <div class="post-content">
+            <strong>Title 2</strong>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          </div>
+          <div class="post-actions">
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn">Delete</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2024 Blog Platform. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Modal for creating a post -->
+  <div id="createPostModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Create New Post</h2>
+      <form id="postForm">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+        <label for="content">Content:</label>
+        <textarea id="content" name="content" required></textarea>
+        <button type="submit" class="btn-submit">Create Post</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript code for the modal and dynamic post rendering
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Modal elements
+      const modal = document.getElementById('createPostModal');
+      const createPostBtn = document.getElementById('createPostBtn');
+      const closeBtn = document.getElementsByClassName('close')[0];
+
+      // Open the modal
+      createPostBtn.onclick = function() {
+        modal.style.display = 'block';
+      }
+
+      // Close the modal
+      closeBtn.onclick = function() {
+        modal.style.display = 'none';
+      }
+
+      // Close the modal when clicking outside of it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = 'none';
+        }
+      }
+
+      // Dummy data to display posts
+      const posts = [
+        { title: 'Title 1', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+        { title: 'Title 2', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' }
+      ];
+
+      const postList = document.getElementById('postList');
+
+      // Function to render posts
+      function renderPosts() {
+        postList.innerHTML = '';
+        posts.forEach((post, index) => {
+          const postItem = document.createElement('li');
+          postItem.className = 'post-item';
+
+          const postContent = document.createElement('div');
+          postContent.className = 'post-content';
+          postContent.innerHTML = `<strong>${post.title}</strong><p>${post.content}</p>`;
+
+          const postActions = document.createElement('div');
+          postActions.className = 'post-actions';
+          postActions.innerHTML = `
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn">Delete</button>
+          `;
+
+          postActions.querySelector('.delete-btn').addEventListener('click', () => {
+            posts.splice(index, 1);
+            renderPosts();
+          });
+
+          postItem.appendChild(postContent);
+          postItem.appendChild(postActions);
+          postList.appendChild(postItem);
+        });
+      }
+
+      renderPosts();
+
+      // Form submission handler
+      document.getElementById('postForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const title = document.getElementById('title').value;
+        const content = document.getElementById('content').value;
+        posts.push({ title, content });
+        renderPosts();
+        modal.style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
